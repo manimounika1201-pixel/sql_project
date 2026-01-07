@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="UTF-8"?><sqlb_project><db path="C:/Users/MANIKANDAN/OneDrive/ドキュメント/data sets/final project.db" readonly="0" foreign_keys="1" case_sensitive_like="0" temp_store="0" wal_autocheckpoint="1000" synchronous="2"/><attached/><window><main_tabs open="structure query browser pragmas" current="1"/></window><tab_structure><column_width id="0" width="300"/><column_width id="1" width="0"/><column_width id="2" width="100"/><column_width id="3" width="1222"/><column_width id="4" width="0"/><expanded_item id="0" parent="1"/><expanded_item id="1" parent="1"/><expanded_item id="2" parent="1"/><expanded_item id="3" parent="1"/></tab_structure><tab_browse><table title="Employess" custom_title="0" dock_id="1" table="4,9:mainEmployess"/><dock_state state="000000ff00000000fd0000000100000002000005f4000002aefc0100000001fb000000160064006f0063006b00420072006f00770073006500310100000000000005f40000012d00ffffff000002580000000000000004000000040000000800000008fc00000000"/><default_encoding codec=""/><browse_table_settings><table schema="main" name="Employess" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_" freeze_columns="0"><sort/><column_widths><column index="1" value="29"/><column index="2" value="54"/><column index="3" value="92"/><column index="4" value="257"/><column index="5" value="125"/><column index="6" value="54"/><column index="7" value="78"/><column index="8" value="132"/><column index="9" value="44"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table><table schema="main" name="Salary" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_" freeze_columns="0"><sort/><column_widths><column index="1" value="29"/><column index="2" value="54"/><column index="3" value="92"/><column index="4" value="257"/><column index="5" value="125"/><column index="6" value="54"/><column index="7" value="78"/><column index="8" value="132"/><column index="9" value="44"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table></browse_table_settings></tab_browse><tab_sql><sql name="SQL 1*">--Normal queries:
+
+SELECT * FROM Employess;
+
+--1)Display only Age,Job Title,and Salary?
+
+SELECT Age,JobTitle,Salary FROM Employess;
+
+
+
+--2)Employees from USA with salary greater than 80,000?
+
+SELECT * FROM Employess WHERE salary&lt;80000 AND Country='USA';
+
+
+
+--3)Details about Female employees only?
+
+SELECT * FROM Employess WHERE gender='Female';
+
+
+
+--4)Employees with more than 5 years of experience?
+
+SELECT * FROM Employess WHERE Years_of_Experience &gt;5;
+
+
+
+--5)Employees who are Senior?
+
+SELECT * FROM Employess WHERE senior=1;
+
+
+
+--6)Sort employees by salary (highest first)?
+
+SELECT * FROM Employess ORDER BY salary DESC LIMIT 4;---limit optional
+ 
+ 
+ 
+--7)Count total number of employees?
+
+SELECT COUNT(*)FROM Employess;
+
+
+
+--8)Average salary of all employees?
+
+SELECT AVG(salary)FROM Employess;
+
+
+
+--9)Number of employees by gender?
+
+SELECT gender,COUNT(*)FROM Employess GROUP BY gender;---female
+
+
+
+--10)Employees with salary greater then 100000 where job title is software engineer?
+
+SELECT * FROM Employess WHERE salary&gt;100000 AND JobTitle='Software Engineer';
+
+
+
+---Subqueries:
+
+SELECT * FROM Employess;
+
+
+--1)Employess whose salary is greater than avg salary?
+   
+   
+ SELECT * FROM Employess
+
+ WHERE salary&gt;(select AVG(salary) 
+ 
+ FROM Employess);
+
+
+ 
+--2)Employees with more experience than average?
+  
+  
+ SELECT * FROM Employess
+
+ WHERE Years_of_Experience&gt;(select AVG(Years_of_Experience)
+ 
+ FROM Employess);
+
+ 
+
+--3)Employees earning more than the maximum salary of all non-senior employees?
+
+ SELECT Age,Gender,JobTitle,Salary
+
+ FROM Employess WHERE salary &gt;
+
+ (select MAX(salary)FROM Employess WHERE JobTitle=0);
+
+
+ 
+ 
+--4)Job titles with average experience is greater than 10 years?
+
+
+ SELECT Age,Gender,JobTitle,Years_of_Experience
+
+ FROM Employess
+ 
+ WHERE JobTitle in
+ 
+ (SELECT JobTitle FROM Employess GROUP BY JobTitle having AVG(Years_of_Experience)&gt;10);
+
+ 
+
+--5)Employees earning less than max salary in USA?
+
+
+ SELECT * FROM Employess
+
+ WHERE country='USA' AND Salary
+ 
+ &lt;(SELECT MAX(salary)FROM Employess );
+
+ 
+
+--6)Employees whose salary is greater than the total employee count?
+
+ SELECT Age,Gender,JobTitle,Salary
+ 
+ FROM Employess WHERE salary&gt;
+  
+ (select COUNT(*)FROM Employess);
+
+
+ 
+--7)Employee with highest salary?
+
+ SELECT Age,Gender,JobTitle,Salary 
+ 
+ FROM Employess WHERE
+ 
+ salary =(SELECT salary FROM Employess GROUP BY salary ORDER BY salary DESC LIMIT 1);
+
+ 
+ 
+ 
+--8)Employees whose job title ends with Engineer and salary higher than average salary?
+
+ SELECT * FROM Employess
+
+ WHERE JobTitle LIKE '%Engineer' AND salary&gt;
+ 
+ (select AVG(salary)FROM Employess);
+
+ 
+ 
+--9)Employees earning more than the average distinct salary?
+
+ SELECT * FROM Employess 
+
+ WHERE Salary =(
+
+ SELECT MIN(DISTINCT Salary)
+
+ FROM Employess 
+
+);
+
+
+--10)Employees whose experience is less than total experience of Senior  employess in data analyst?
+
+
+ SELECT * FROM Employess
+
+ WHERE  JobTitle='Data Analyst' AND Years_of_Experience&lt;
+
+ (SELECT SUM(Years_of_Experience)
+
+  FROM Employess);
+
+
+--windows function:
+
+select * from Employess;
+
+
+
+--1)Rank Employess by salaries in each jobs(with japs)?
+
+
+
+SELECT Age,Gender,JobTitle,Salary,
+
+  RANK()over (PARTITION BY JobTitle ORDER BY Salary desc)
+
+  AS dept_rank FROM Employess;
+
+  
+
+
+--2)Dense Rank by age within each country (without japs)?
+
+
+
+SELECT Age,Gender,JobTitle,Salary,Country,
+
+ DENSE_RANK()over (PARTITION BY Country ORDER BY Age desc)
+
+ AS dept_dense_rank FROM Employess;
+
+ 
+
+
+--3)Calculate the previous salary detils?
+
+
+
+SELECT Age,Gender,JobTitle,Salary,
+
+ LAG(salary)over (ORDER BY Age )
+
+ AS prev_salary FROM Employess;
+
+
+ 
+
+--4)Calculate the first salary in each job level?
+
+
+
+SELECT Age,Gender,JobTitle,Salary,
+
+ FIRST_VALUE(salary)over (PARTITION BY JobTitle ORDER BY salary DESC )
+
+ AS highest_salary FROM Employess;
+
+ 
+
+
+--5)Count the employess in each job level?
+
+
+
+SELECT Age,Gender,JobTitle,Salary,
+
+ COUNT(*) over (PARTITION BY JobTitle) 
+
+ AS job_count FROM Employess;</sql><current_tab id="0"/></tab_sql></sqlb_project>
